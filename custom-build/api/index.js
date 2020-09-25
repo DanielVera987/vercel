@@ -7,8 +7,9 @@ const meals = require('./routes/meals');
 const orders = require('./routes/orders');
 
 const app = express();
-app.use(bodyParser.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json()); 
 
 mongoose.connect(process.env.MONGO_URI,{ useNewUrlParser: true, useUnifiedTopology: true });
 

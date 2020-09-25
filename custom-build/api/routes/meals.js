@@ -24,8 +24,8 @@ router.put('/:id', (req, res) => {
        .then(() => res.sendStatus(204))
 })
 
-router.delete('/', (req, res) => {
-  Meals.findOneAndDelete(req.params.id).exec().then(() => res.sendStatus(204))
+router.delete('/:id', (req, res) => {
+  Meals.findOneAndDelete(req.params.id).then(() => res.sendStatus(204))
 })
 
 module.exports = router
