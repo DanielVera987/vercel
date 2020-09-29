@@ -8,20 +8,46 @@
   
 </head>
 <body>
-  <div id="meals">
-    <ul id="meals-list">
-      <li>Cargando...</li>
-    </ul>
-    <form id="order">
-      <input type="hidden" id="meals-id"/>
-      <input type="submit" id="submit" disabled/>
-    </form>
-  </div>
-  <div id="orders">
-    <ul id="orders-list">
-      <li>Cargando...</li>
-    </ul>
-  </div>
-  <script src="main.js"></script>
+  <div id="app"></div>
 </body>
+<template id="login-template">
+  <div class="form-main">
+    <p class="form-title">Inicia sesion</p>
+    <form id="login-form" class="login-form">
+        <div>
+          <p>Email</p>
+          <input id="email" placeholder="Email">
+        </div>
+
+        <div>
+          <p>Constraseña</p>
+          <input type="password" id="password" placeholder="Contraseña">
+        </div>
+
+        <div>
+          <button class="btn block">
+            Enviar
+          </button>
+        </div>
+      </form>
+    </div>
+  </template>
+    
+  <template id="orders-view">
+    <div id="meals">
+      <ul id="meals-list">
+        <li>Cargando...</li>
+      </ul>
+      <form id="order">
+        <input type="hidden" id="meals-id"/>
+        <button id="submit">Enviar</button>
+      </form>
+    </div>
+    <div id="orders">
+      <ul id="orders-list">
+        <li>Cargando...</li>
+      </ul>
+    </div>
+  </template>
+  <script src="main.js"></script>
 </html>

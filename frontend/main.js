@@ -1,4 +1,6 @@
 let mealsState = []
+let user = {}
+let ruta = 'login' // login/registro/orders
 
 const stringToHTML = (s) => {
   const parser = new DOMParser()
@@ -26,12 +28,13 @@ const rederOrder = (order, meal) => {
   return element
 }
 
-window.onload = () => {
+const iniciailzaFormulario = () => {
   const orderForm = document.getElementById('order')
   orderForm.onsubmit = (e) => {
     e.preventDefault()
     const submit = document.getElementById('submit')
     submit.setAttribute('disabled', true)
+    const mealId = document.getElementById('meals-id')
     const mealIdValue = mealId.value
     if (!mealIdValue) {
       alert('Debe seleccionar un plato')
@@ -40,7 +43,7 @@ window.onload = () => {
 
     const order = {
       meal_id: mealIdValue,
-      user_id: 'daniel vera'
+      user_id: user._id,
     }
 
     fetch('http://localhost:3000/api/orders', {
@@ -55,11 +58,11 @@ window.onload = () => {
         const renderedOrder = renderOrder(respuesta, mealsState)
         const ordersList = document.getElementById('orders-list')
         ordersList.appendChild(renderedOrder)
-        submit.removeAttribute('disabled')
       })
   }
+}
 
-
+const inicializaDatos = () => {
   fetch('http://localhost:3000/api/meals')
     .then(response => response.json())
     .then(data => {
@@ -75,10 +78,67 @@ window.onload = () => {
         .then(ordersData => {
           const ordersList = document.getElementById('orders-list')
           const listOrders = ordersData.map(orderData => renderOrder(orderData, data))
-
           ordersList.removeChild(ordersList.firstElementChild)
           listOrders.forEach(element => ordersList.appendChild(element))
-          console.log(ordersData)
         })
-    })   
+    }) 
+}
+
+const renderApp = () => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    user = JSON.parse(localStorage.getItem('user'))
+    return renderOrders()
+  }
+  renderLogin()
+}
+
+const renderOrders = () => {
+  const ordersView = document.getElementById('orders-view')
+  document.getElementById('app').innerHTML = ordersView.innerHTML
+  iniciailzaFormulario()
+  inicializaDatos()
+}
+
+const renderLogin = ()  => {
+  const loginTemplate = document.getElementById('login-template')
+  document.getElementById('app').innerHTML = loginTemplate.innerHTML
+
+  const loginForm = document.getElementById('login-form')
+
+  loginForm.onsubmit = (e) => {
+    e.preventDefault()
+    const email = document.getElementById('email').value
+    const password = document.getElementById('password').value
+    fetch('http://localhost:3000/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({email, password}),
+    }).then(x => x.json())
+      .then(respuesta => {
+        localStorage.setItem('token', respuesta.token)
+        ruta = 'orders'
+      })
+      .then(x => () => {
+        fetch('http://localhost:3000/api/auth/me', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: token,
+          }
+        })
+      })
+      .then(x => x.json())
+      .then(fecheduser => {
+        localStorage.setItem('user', JSON.stringify(fecheduser))
+        user = fecheduser
+        renderOrders()
+      })
+  }
+}
+
+window.onload = () => {
+  renderApp()
 }
